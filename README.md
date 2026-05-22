@@ -1,73 +1,82 @@
-# Welcome to your Lovable project
+# DeFiStrats Operator Guide
 
-## Project info
+DeFiStrats is a React/Vite application for publishing HyperEVM and Hyperliquid DeFi strategies. The current production domain is:
 
-**URL**: https://lovable.dev/projects/e4dcc4fe-6db1-4431-950c-0af9d1a13f65
+- Production: `https://hyperliquid.solidmetrics.co`
+- Retiring domain: `defistrats.xyz` is being allowed to expire and should not be used for new SEO, DNS, or docs references.
+- Supabase project: `defistrats-hyperliquid` / `cnjsruydumsnacyvmgje`
 
-## How can I edit this code?
+## Stack
 
-There are several ways of editing your application.
+- React 18, TypeScript, Vite
+- shadcn/ui and Tailwind CSS
+- Supabase Postgres, Auth, Storage, RLS, and Edge Functions
+- TanStack Query for server-state caching
+- Vercel for frontend hosting
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/e4dcc4fe-6db1-4431-950c-0af9d1a13f65) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Local Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The development server runs on port `8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Required frontend environment variables:
 
-**Use GitHub Codespaces**
+```sh
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Do not put service-role keys or scraper API keys in Vite/browser environment variables.
 
-## What technologies are used for this project?
+## Verification Commands
 
-This project is built with:
+Run these before handing off production-impacting changes:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```sh
+npx tsc --noEmit
+npm run build
+```
 
-## How can I deploy this project?
+Use `npm run lint` when changing TypeScript or React files. Existing dependency and lint cleanup may be handled separately by the build-health owner.
 
-Simply open [Lovable](https://lovable.dev/projects/e4dcc4fe-6db1-4431-950c-0af9d1a13f65) and click on Share -> Publish.
+## Admin Operations
 
-## Can I connect a custom domain to my Lovable project?
+Admin routes are intentionally excluded from `public/sitemap.xml` and blocked in `public/robots.txt`.
 
-Yes, you can!
+Important routes:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- `/admin/login` - admin login
+- `/admin/add` - create or edit staking assets
+- `/admin/database` - manage restored staking assets
+- `/admin/user` - user/admin request management
+- `/admin/livestream` - livestream video management
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Admin authorization is backed by the `profiles` table. Superadmin privileges are controlled with `is_superadmin`; do not update these flags from the browser or ad hoc SQL without checking RLS and audit implications.
+
+## Data Quality Workflow
+
+Core content lives in:
+
+- `staking_assets`
+- `apy_tvl_configs`
+- `scraper_configs`
+- `banners`
+- `livestream_videos`
+
+For URL cleanup, prefer a reviewed migration or SQL script over live manual edits. Current Agent 4 cleanup SQL is in `supabase/migrations/20260522091230_normalize_agent4_data_urls.sql`.
+
+Known data review items as of 2026-05-22:
+
+- 70 published strategies have APY or TVL set to zero and need manual refresh or scraper validation.
+- The duplicate HypurrFi HYPE/USDT Borrow/Lending strategy must be resolved by a content owner before deleting or unpublishing either row.
+- One `apy_tvl_configs.target_website` row is blank and needs a valid scraper target or should be disabled.
+
+See `docs/data-quality-and-backup-runbook.md` for the exact SQL checks and backup/export process.
+
+## Supabase Rebuild
+
+Use `SUPABASE_REBUILD.md` when recreating the Supabase project or restoring schema/data. The rebuild runbook is conservative about secrets: service-role keys remain local or server-side only, and `FIRECRAWL_API_KEY` belongs in Supabase Edge Function secrets after scraper auth is hardened.

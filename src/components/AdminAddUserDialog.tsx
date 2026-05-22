@@ -54,7 +54,7 @@ export const AdminAddUserDialog: React.FC<Props> = ({ onSuccessfulAdd }) => {
     setFullName("");
     setPassword("");
     setType("admin");
-    onSuccessfulAdd && onSuccessfulAdd();
+    onSuccessfulAdd?.();
   };
 
   return (

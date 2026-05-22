@@ -17,6 +17,8 @@ interface DataTableProps {
   showFilters?: boolean;
 }
 
+const ROWS_PER_PAGE = 10;
+
 // Helper functions to manage URL state
 const serializeFilters = (filters: SimpleFilterConfig, page?: number): URLSearchParams => {
   const params = new URLSearchParams();
@@ -58,9 +60,10 @@ export const DataTable: React.FC<DataTableProps> = ({
   // Custom filter setter that also updates URL
   const updateFilters = useCallback((newFilters: SimpleFilterConfig) => {
     setFilters(newFilters);
-    const newParams = serializeFilters(newFilters, currentPage);
+    setCurrentPage(1);
+    const newParams = serializeFilters(newFilters, 1);
     setSearchParams(newParams, { replace: true });
-  }, [setSearchParams, currentPage]);
+  }, [setSearchParams]);
 
   // Custom page setter that also updates URL
   const updateCurrentPage = useCallback((page: number) => {
@@ -72,11 +75,11 @@ export const DataTable: React.FC<DataTableProps> = ({
   // Update state when URL changes (e.g., browser back/forward)
   useEffect(() => {
     const urlFilters = deserializeFilters(searchParams);
-    const urlPage = parseInt(searchParams.get('page') || '1', 10);
+    const parsedPage = parseInt(searchParams.get('page') || '1', 10);
+    const urlPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
     setFilters(urlFilters);
     setCurrentPage(urlPage);
   }, [searchParams]);
-  const totalPages = 10;
 
   // Fetch assets from Supabase
   const { data: stakingAssets, isLoading, error } = useStakingAssets();
@@ -97,13 +100,26 @@ export const DataTable: React.FC<DataTableProps> = ({
     return filtered;
   }, [sortedRows, filters]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredAndSortedRows.length / ROWS_PER_PAGE));
+  const safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const paginatedRows = useMemo(() => {
+    const startIndex = (safeCurrentPage - 1) * ROWS_PER_PAGE;
+    return filteredAndSortedRows.slice(startIndex, startIndex + ROWS_PER_PAGE);
+  }, [filteredAndSortedRows, safeCurrentPage]);
+
+  useEffect(() => {
+    if (currentPage !== safeCurrentPage) {
+      updateCurrentPage(safeCurrentPage);
+    }
+  }, [currentPage, safeCurrentPage, updateCurrentPage]);
+
   const handlePrevious = () => {
-    const newPage = Math.max(1, currentPage - 1);
+    const newPage = Math.max(1, safeCurrentPage - 1);
     updateCurrentPage(newPage);
   };
   
   const handleNext = () => {
-    const newPage = Math.min(totalPages, currentPage + 1);
+    const newPage = Math.min(totalPages, safeCurrentPage + 1);
     updateCurrentPage(newPage);
   };
   
@@ -172,7 +188,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         )}
         
         <DataTableHeader sortConfig={sortConfig} onSort={handleSort} />
-        {(filteredAndSortedRows as TableRow[]).map((row) => (
+        {(paginatedRows as TableRow[]).map((row) => (
           <ModalDataTableRow
             key={row.id}
             row={row}
@@ -196,14 +212,14 @@ export const DataTable: React.FC<DataTableProps> = ({
           <h3 className="text-[#F7F7F7] text-sm font-semibold">Staking Assets</h3>
         </div>
         <div className="space-y-4 p-4">
-          {(filteredAndSortedRows as TableRow[]).map((row) => (
+          {(paginatedRows as TableRow[]).map((row) => (
             <MobileDataCard key={row.id} row={row} onViewDetails={handleViewDetails} />
           ))}
         </div>
       </div>
 
       <DataTablePagination
-        currentPage={currentPage}
+        currentPage={safeCurrentPage}
         totalPages={totalPages}
         onPrevious={handlePrevious}
         onNext={handleNext}

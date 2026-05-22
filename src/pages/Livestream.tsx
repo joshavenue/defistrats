@@ -18,6 +18,8 @@ interface LivestreamVideo {
   created_at: string;
 }
 
+const VIDEO_PLACEHOLDER_IMAGE = '/placeholder.svg';
+
 const Livestream: React.FC = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<LivestreamVideo[]>([]);
@@ -74,7 +76,7 @@ const Livestream: React.FC = () => {
 
   const getPreviewImage = (url: string): string => {
     const videoId = extractVideoId(url);
-    if (!videoId) return '/api/placeholder/400/225';
+    if (!videoId) return VIDEO_PLACEHOLDER_IMAGE;
     
     // Use X's thumbnail API or fallback to placeholder
     return `https://ton.twitter.com/1.1/ton/data/dm/broadcast/${videoId}/thumb_128x128.jpg`;
@@ -82,7 +84,7 @@ const Livestream: React.FC = () => {
 
   const handleWatchVideo = (video: LivestreamVideo) => {
     // Open the X broadcast in a new tab
-    window.open(video.x_broadcast_url, '_blank');
+    window.open(video.x_broadcast_url, '_blank', 'noopener,noreferrer');
   };
 
   if (isLoading) {
@@ -164,7 +166,7 @@ const Livestream: React.FC = () => {
                       alt={video.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = '/api/placeholder/400/225';
+                        e.currentTarget.src = VIDEO_PLACEHOLDER_IMAGE;
                       }}
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

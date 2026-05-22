@@ -4,11 +4,27 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
+const commonTypeScriptRules = {
+  "@typescript-eslint/no-explicit-any": "off",
+  "@typescript-eslint/no-empty-object-type": "off",
+  "@typescript-eslint/no-unused-expressions": "warn",
+  "@typescript-eslint/no-unused-vars": "off",
+  "no-useless-escape": "warn",
+  "prefer-const": "warn",
+};
+
 export default tseslint.config(
-  { ignores: ["dist"] },
+  {
+    ignores: [
+      "dist",
+      "node_modules",
+      "supabase/.temp",
+      "legacy_supabase_export_*",
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ["**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -23,7 +39,32 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
-      "@typescript-eslint/no-unused-vars": "off",
+      ...commonTypeScriptRules,
+    },
+  },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ["supabase/functions/**/*.ts"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.serviceworker,
+        Deno: "readonly",
+      },
+    },
+    rules: {
+      ...commonTypeScriptRules,
+    },
+  },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ["*.config.{js,ts}", "scripts/**/*.{js,ts,mjs}", "test-*.mjs"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
+    },
+    rules: {
+      ...commonTypeScriptRules,
     },
   }
 );

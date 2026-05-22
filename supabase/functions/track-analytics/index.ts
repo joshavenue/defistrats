@@ -15,12 +15,12 @@ function extractClientIP(forwardedFor: string | null, realIP: string | null): st
     const firstIP = ips[0];
     
     // Basic validation to ensure it looks like an IP address
-    if (firstIP && /^[\d\.:a-f]+$/.test(firstIP)) {
+    if (firstIP && /^[\d.:a-f]+$/.test(firstIP)) {
       return firstIP;
     }
   }
   
-  if (realIP && /^[\d\.:a-f]+$/.test(realIP)) {
+  if (realIP && /^[\d.:a-f]+$/.test(realIP)) {
     return realIP;
   }
   

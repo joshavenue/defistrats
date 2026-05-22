@@ -5,6 +5,7 @@ import { TagBadge } from "./TagBadge";
 import { TableActionButtons } from "./ActionButtons";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { sanitizeRichTextHtml } from "@/lib/htmlSanitizer";
 
 interface TableRow {
   id: string;
@@ -200,7 +201,7 @@ export const ExpandableDataTableRow: React.FC<ExpandableDataTableRowProps> = ({
               <h4 className="text-[#F7F7F7] text-sm font-semibold mb-2">Strategy Description</h4>
               <div 
                 className="rich-text-content mb-4"
-                dangerouslySetInnerHTML={{ __html: row.strategyDescription || 'No strategy description available.' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeRichTextHtml(row.strategyDescription || 'No strategy description available.') }}
               />
 
               {/* Audit Section */}

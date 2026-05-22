@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { SimpleRiskBadge } from './RiskBadge';
 import { TagBadge } from './TagBadge';
 import { AdminActionButtons } from './AdminActionButtons';
@@ -10,7 +10,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Edit3, Check, X } from 'lucide-react';
 import { getDisplayAssetName, isLSTStrategy } from '@/lib/strategyUtils';
-import { scrapeWebsiteForAPYTVL } from '@/utils/firecrawl';
 interface StakingAsset {
   id: string;
   asset: string;
@@ -53,7 +52,6 @@ interface AdminDataTableProps {
   onEdit: (id: string) => void;
   className?: string;
   showFilters?: boolean;
-  onBatchFetch?: () => Promise<void>;
 }
 interface EditState {
   id: string;
@@ -63,12 +61,10 @@ interface EditState {
 export const AdminDataTable: React.FC<AdminDataTableProps> = ({
   onEdit,
   className = '',
-  showFilters = true,
-  onBatchFetch
+  showFilters = true
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editState, setEditState] = useState<EditState | null>(null);
-  const [isBatchFetching, setIsBatchFetching] = useState(false);
   const [filters, setFilters] = useState<SimpleFilterConfig>({
     protocol: [],
     strategy: [],
@@ -119,15 +115,15 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
   });
 
   // Helper function to check if asset has active fetcher
-  const hasActiveFetcher = (assetId: string) => {
+  const hasActiveFetcher = useCallback((assetId: string) => {
     return apyTvlConfigs.some(config => config.asset_id === assetId && config.is_active);
-  };
+  }, [apyTvlConfigs]);
 
   // Helper function to get TVL suffix for asset
-  const getTVLSuffix = (assetId: string) => {
+  const getTVLSuffix = useCallback((assetId: string) => {
     const config = apyTvlConfigs.find(config => config.asset_id === assetId && config.is_active);
     return config?.tvl_suffix;
-  };
+  }, [apyTvlConfigs]);
 
   // Apply filters first
   const filteredAssets = useMemo(() => {
@@ -163,7 +159,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
 
       return true;
     });
-  }, [fetchedAssets, filters, apyTvlConfigs]);
+  }, [fetchedAssets, filters, hasActiveFetcher]);
 
   // Sorting logic
   const stakingAssets = useMemo(() => {
@@ -346,109 +342,6 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
     }
   };
 
-  // Batch fetch APY & TVL for all active configs
-  const handleBatchFetch = async () => {
-    setIsBatchFetching(true);
-    const activeConfigs = apyTvlConfigs.filter(config => config.is_active);
-    
-    if (activeConfigs.length === 0) {
-      toast({
-        title: "No Active Fetchers",
-        description: "No assets have active APY & TVL fetchers enabled",
-        variant: "destructive"
-      });
-      setIsBatchFetching(false);
-      return;
-    }
-
-    toast({
-      title: "Batch Fetch Started",
-      description: `Fetching APY & TVL for ${activeConfigs.length} assets...`
-    });
-
-    let successCount = 0;
-    let failCount = 0;
-
-    for (const config of activeConfigs) {
-      try {
-        console.log(`Fetching data for asset ${config.asset_id}...`);
-        
-        // Prepare text patterns if they exist in the config
-        const apyPattern = config.apy_text_pattern ? {
-          pattern: config.apy_text_pattern,
-          contextBefore: config.apy_context_before,
-          contextAfter: config.apy_context_after
-        } : undefined;
-
-        const tvlPattern = config.tvl_text_pattern ? {
-          pattern: config.tvl_text_pattern,
-          contextBefore: config.tvl_context_before,
-          contextAfter: config.tvl_context_after
-        } : undefined;
-
-        const scrapedData = await scrapeWebsiteForAPYTVL(
-          config.target_website,
-          config.target_asset1,
-          config.apy_field_name,
-          config.tvl_field_name,
-          config.tvl_suffix,
-          config.wait_delay_seconds,
-          apyPattern,
-          tvlPattern
-        );
-
-        if (!scrapedData.error && (scrapedData.apy !== undefined || scrapedData.tvl !== undefined)) {
-          // Update the asset with new values
-          const updateData: { apy?: number; tvl?: number } = {};
-          if (scrapedData.apy !== undefined) updateData.apy = scrapedData.apy;
-          if (scrapedData.tvl !== undefined) updateData.tvl = scrapedData.tvl;
-
-          const { error: updateError } = await supabase
-            .from('staking_assets')
-            .update(updateData)
-            .eq('id', config.asset_id);
-
-          if (updateError) {
-            console.error(`Failed to update asset ${config.asset_id}:`, updateError);
-            failCount++;
-          } else {
-            console.log(`Successfully updated asset ${config.asset_id}:`, updateData);
-            successCount++;
-          }
-        } else {
-          console.error(`Failed to scrape data for asset ${config.asset_id}:`, scrapedData.error);
-          failCount++;
-        }
-      } catch (error) {
-        console.error(`Error processing asset ${config.asset_id}:`, error);
-        failCount++;
-      }
-    }
-
-    // Refresh the assets data
-    queryClient.invalidateQueries({ queryKey: ['staking-assets'] });
-
-    // Show final result
-    toast({
-      title: "Batch Fetch Complete",
-      description: `Successfully updated ${successCount} assets. ${failCount} failed.`,
-      variant: successCount > 0 ? "default" : "destructive"
-    });
-
-    setIsBatchFetching(false);
-  };
-
-  // Expose batch fetch function to parent
-  React.useEffect(() => {
-    if (onBatchFetch) {
-      (window as any).adminTableBatchFetch = handleBatchFetch;
-    }
-    return () => {
-      if ((window as any).adminTableBatchFetch) {
-        delete (window as any).adminTableBatchFetch;
-      }
-    };
-  }, [onBatchFetch]);
   const handlePrevious = () => {
     setCurrentPage(prev => Math.max(1, prev - 1));
   };

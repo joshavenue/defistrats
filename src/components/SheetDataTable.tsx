@@ -65,13 +65,15 @@ interface SheetDataTableProps {
   className?: string;
   showFilters?: boolean;
   onBatchFetch?: () => Promise<void>;
+  isBatchFetching?: boolean;
 }
 
 export const SheetDataTable: React.FC<SheetDataTableProps> = ({
   onEdit,
   className = '',
   showFilters = true,
-  onBatchFetch
+  onBatchFetch,
+  isBatchFetching = false
 }) => {
   const [editedAssets, setEditedAssets] = useState<Record<string, EditedAsset>>({});
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
@@ -416,11 +418,12 @@ export const SheetDataTable: React.FC<SheetDataTableProps> = ({
           {onBatchFetch && (
             <Button
               onClick={onBatchFetch}
+              disabled={isBatchFetching}
               variant="outline"
               className="border-[#373A41] text-[#CECFD2] hover:bg-[#22262F] hover:text-[#F7F7F7] bg-transparent flex items-center gap-2"
             >
               <Download size={16} />
-              Fetch APY & TVL
+              {isBatchFetching ? 'Fetching...' : 'Fetch APY & TVL'}
             </Button>
           )}
         </div>

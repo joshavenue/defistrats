@@ -6,6 +6,7 @@ import { TableActionButtons } from './ActionButtons';
 import { isSingleAssetStrategy } from '@/lib/strategyUtils';
 import { TableRow } from '@/hooks/useStakingAssets';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { sanitizeRichTextHtml } from '@/lib/htmlSanitizer';
 import { OptimizedImage } from './OptimizedImage';
 import { generateStrategyUrl } from '@/utils/urlUtils';
 
@@ -159,7 +160,7 @@ export const MobileDataCard: React.FC<MobileDataCardProps> = ({ row, onViewDetai
             <h5 className="text-xs text-[#94979C] mb-1">Strategy</h5>
             <div 
               className="rich-text-content text-xs"
-              dangerouslySetInnerHTML={{ __html: row.strategyDescription }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichTextHtml(row.strategyDescription) }}
             />
           </div>
         )}

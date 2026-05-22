@@ -67,11 +67,12 @@ otp_length = 6
 otp_expiry = 3600
 
 [functions.scrape-data]
-verify_jwt = false
+verify_jwt = true
 
 [functions.scrape-apy-tvl]
-verify_jwt = false
+verify_jwt = true
 
+# Cron entrypoint: called service-to-service and guarded in-function by SCRAPER_CRON_SECRET.
 [functions.schedule-scrapers]
 verify_jwt = false
 

@@ -184,7 +184,7 @@ export const APYTVLFetcher: React.FC<APYTVLFetcherProps> = ({
   const handleApyTextSelection = () => {
     const selection = window.getSelection();
     if (selection && selection.toString().trim() && selection.rangeCount > 0) {
-      let selectedText = selection.toString().trim();
+      const selectedText = selection.toString().trim();
       setSelectedApyText(selectedText);
       
       // Get surrounding context for pattern matching
@@ -223,7 +223,7 @@ export const APYTVLFetcher: React.FC<APYTVLFetcherProps> = ({
   const handleTvlTextSelection = () => {
     const selection = window.getSelection();
     if (selection && selection.toString().trim() && selection.rangeCount > 0) {
-      let selectedText = selection.toString().trim();
+      const selectedText = selection.toString().trim();
       setSelectedTvlText(selectedText);
       
       // Get surrounding context for pattern matching

@@ -6,6 +6,7 @@ import { ActionButtons } from './ActionButtons';
 import { isSingleAssetStrategy } from '@/lib/strategyUtils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { generateStrategyUrl } from '@/utils/urlUtils';
+import { sanitizeRichTextHtml } from '@/lib/htmlSanitizer';
 
 interface MetricCardProps {
   title: string;
@@ -165,7 +166,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         
         <div 
           className="text-[#94979C] text-xs sm:text-sm leading-4 sm:leading-5 font-normal mt-3 sm:mt-5 rich-text-content"
-          dangerouslySetInnerHTML={{ __html: description }}
+          dangerouslySetInnerHTML={{ __html: sanitizeRichTextHtml(description) }}
         />
         
         <ActionButtons

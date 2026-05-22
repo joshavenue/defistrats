@@ -27,6 +27,8 @@ interface VideoForm {
   description: string;
 }
 
+const VIDEO_PLACEHOLDER_IMAGE = '/placeholder.svg';
+
 const AdminLivestream: React.FC = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<LivestreamVideo[]>([]);
@@ -180,7 +182,7 @@ const AdminLivestream: React.FC = () => {
     if (video.preview_image_url) return video.preview_image_url;
     
     const videoId = extractVideoId(video.x_broadcast_url);
-    if (!videoId) return '/api/placeholder/400/225';
+    if (!videoId) return VIDEO_PLACEHOLDER_IMAGE;
     
     return `https://ton.twitter.com/1.1/ton/data/dm/broadcast/${videoId}/thumb_128x128.jpg`;
   };
@@ -314,7 +316,7 @@ const AdminLivestream: React.FC = () => {
                     alt={video.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = '/api/placeholder/400/225';
+                      e.currentTarget.src = VIDEO_PLACEHOLDER_IMAGE;
                     }}
                   />
                 </div>

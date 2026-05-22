@@ -79,7 +79,15 @@ VITE_SUPABASE_URL=https://your-project-ref.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
 ```
 
-Rebuild/redeploy the frontend. Keep `defistrats.xyz` DNS pointed at the host after the new deployment is ready.
+Rebuild/redeploy the frontend at `https://hyperliquid.solidmetrics.co`.
+
+`defistrats.xyz` is being allowed to expire. Do not add new DNS, sitemap, metadata, or documentation references that depend on `defistrats.xyz`.
+
+After deploying, check that the frontend host has:
+
+- The `hyperliquid.solidmetrics.co` production domain attached.
+- `public/robots.txt` pointing to `https://hyperliquid.solidmetrics.co/sitemap.xml`.
+- `public/sitemap.xml` containing only public URLs on `https://hyperliquid.solidmetrics.co`.
 
 ## 7. Smoke Test
 
@@ -91,3 +99,24 @@ Check:
 - `/admin/database` shows the new row
 - The public table shows only published strategies
 - Banner upload works through the `asset-logos` bucket
+- `https://hyperliquid.solidmetrics.co/robots.txt` references the current sitemap
+- `https://hyperliquid.solidmetrics.co/sitemap.xml` does not include admin URLs
+
+## 8. Export And Backup
+
+Before destructive rebuilds or content cleanup, export both schema and data:
+
+```sh
+npx supabase db dump --linked --file backups/defistrats_schema_YYYYMMDD.sql
+npx supabase db dump --linked --data-only --use-copy --file backups/defistrats_data_YYYYMMDD.sql
+```
+
+For a smaller operator handoff, export the core content tables from SQL or the Supabase dashboard:
+
+- `staking_assets`
+- `apy_tvl_configs`
+- `scraper_configs`
+- `banners`
+- `livestream_videos`
+
+Store backups outside the deployed app bundle. Do not commit dumps if they contain user data, analytics data, private URLs, or credentials.

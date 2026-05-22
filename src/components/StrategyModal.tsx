@@ -1,9 +1,10 @@
 import React from 'react';
-import { X, Play, ExternalLink, Shield, TrendingUp, DollarSign } from 'lucide-react';
+import { X, Play, ExternalLink, Shield } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { SimpleRiskBadge } from './RiskBadge';
 import { TagBadge } from './TagBadge';
 import { normalizeUrl } from '@/lib/urlUtils';
+import { sanitizeRichTextHtml } from '@/lib/htmlSanitizer';
 import { trackLinkClick } from '@/lib/analytics';
 
 interface TableRow {
@@ -127,25 +128,6 @@ export const StrategyModal: React.FC<StrategyModalProps> = ({
         </DialogHeader>
 
         <div className="py-6 space-y-6">
-          {/* Key Metrics - Hidden for now */}
-          {false && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#181B20] border border-[#22262F] rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-[#17B26A]" />
-                  <span className="text-sm text-[#94979C]">APY</span>
-                </div>
-                <div className="text-2xl font-bold text-[#17B26A]">{strategy.apy}</div>
-              </div>
-              <div className="bg-[#181B20] border border-[#22262F] rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="w-4 h-4 text-[#94979C]" />
-                  <span className="text-sm text-[#94979C]">TVL</span>
-                </div>
-                <div className="text-2xl font-bold text-[#F7F7F7]">{strategy.tlv}</div>
-              </div>
-            </div>
-          )}
 
           {/* Asset Icons */}
           <div className="flex items-center gap-4">
@@ -210,7 +192,7 @@ export const StrategyModal: React.FC<StrategyModalProps> = ({
               <div 
                 className="text-[#CECFD2] text-sm leading-relaxed rich-text-content"
                 dangerouslySetInnerHTML={{ 
-                  __html: strategy.strategyDescription || 'No strategy description available.' 
+                  __html: sanitizeRichTextHtml(strategy.strategyDescription || 'No strategy description available.')
                 }}
               />
             </div>

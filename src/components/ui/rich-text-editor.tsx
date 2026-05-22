@@ -8,6 +8,7 @@ import Color from '@tiptap/extension-color';
 import { Bold, Italic, List, ListOrdered, Link as LinkIcon, Palette } from 'lucide-react';
 import { Button } from './button';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
+import { sanitizeRichTextHtml, sanitizeRichTextUrl } from '@/lib/htmlSanitizer';
 
 interface RichTextEditorProps {
   content: string;
@@ -33,20 +34,22 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       Color,
       Link.configure({
         openOnClick: false,
+        validate: (href) => Boolean(sanitizeRichTextUrl(href)),
         HTMLAttributes: {
           class: 'text-[#75E0A7] underline hover:text-[#6BC995]',
         },
       }),
     ],
-    content,
+    content: sanitizeRichTextHtml(content),
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
+      const html = sanitizeRichTextHtml(editor.getHTML());
       onChange(html);
     },
     editorProps: {
       attributes: {
         class: 'prose prose-invert max-w-none focus:outline-none min-h-[120px] p-3',
       },
+      transformPastedHTML: (html) => sanitizeRichTextHtml(html),
     },
   });
 
@@ -63,7 +66,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       return;
     }
 
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    const safeUrl = sanitizeRichTextUrl(url);
+    if (!safeUrl) return;
+
+    editor.chain().focus().extendMarkRange('link').setLink({ href: safeUrl }).run();
   };
 
   const setColor = (color: string) => {

@@ -17,4 +17,4 @@ Allow: /
 Disallow: /admin/
 
 # Sitemap location
-Sitemap: https://defistrats.com/sitemap.xml
+Sitemap: https://hyperliquid.solidmetrics.co/sitemap.xml

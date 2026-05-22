@@ -14,6 +14,7 @@ import { getDisplayAssetName } from '@/lib/strategyUtils';
 import { Button } from '@/components/ui/button';
 import { ROICalculator } from '@/components/ROICalculator';
 import { ScrambleText } from '@/components/ScrambleText';
+import { sanitizeRichTextHtml } from '@/lib/htmlSanitizer';
 const StrategyDetail: React.FC = () => {
   const {
     protocol,
@@ -319,7 +320,7 @@ const StrategyDetail: React.FC = () => {
                 <div className="bg-[#13161B]/80 backdrop-blur-sm border border-[#22262F] rounded-xl p-4 sm:p-6">
                   <h2 className="text-base sm:text-lg font-semibold text-[#F7F7F7] mb-3 sm:mb-4">Strategy Details</h2>
                   <div className="text-[#94979C] leading-relaxed rich-text-content text-sm sm:text-base overflow-hidden" dangerouslySetInnerHTML={{
-                    __html: strategy.strategy_description
+                    __html: sanitizeRichTextHtml(strategy.strategy_description)
                   }} />
                 </div>
               )}
