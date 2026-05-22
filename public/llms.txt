@@ -1,0 +1,17 @@
+# DeFi Staking Strategies
+
+## Available Strategies
+
+- [Aave Ethereum Lending Strategy](https://your-domain.com/strategies/aave-ethereum-lending.md)
+- [Compound Finance USDC Strategy](https://your-domain.com/strategies/compound-usdc-strategy.md)
+- [Uniswap V3 ETH/USDC LP Strategy](https://your-domain.com/strategies/uniswap-v3-eth-usdc-lp.md)
+- [Lido Ethereum Staking Strategy](https://your-domain.com/strategies/lido-ethereum-staking.md)
+- [Curve Finance 3Pool Strategy](https://your-domain.com/strategies/curve-3pool-strategy.md)
+- [Yearn Finance Vault Strategy](https://your-domain.com/strategies/yearn-vault-strategy.md)
+- [MakerDAO DAI Savings Rate](https://your-domain.com/strategies/makerdao-dai-savings.md)
+- [Rocket Pool ETH Staking](https://your-domain.com/strategies/rocket-pool-eth-staking.md)
+
+---
+*Total strategies: 8*
+*Last updated: 2025-01-05*
+*Note: This is a template file. Actual strategy data will be populated from your database.*

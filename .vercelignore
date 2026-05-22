@@ -1,0 +1,12 @@
+.env
+.env.*
+*.local
+
+node_modules
+dist
+dist-ssr
+
+.claude
+supabase/.temp
+logs
+*.log
