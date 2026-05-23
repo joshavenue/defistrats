@@ -117,6 +117,5 @@ For a smaller operator handoff, export the core content tables from SQL or the S
 - `apy_tvl_configs`
 - `scraper_configs`
 - `banners`
-- `livestream_videos`
 
 Store backups outside the deployed app bundle. Do not commit dumps if they contain user data, analytics data, private URLs, or credentials.

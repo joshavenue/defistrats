@@ -117,31 +117,6 @@ const Header: React.FC = () => {
           {/* Navigation - Centered */}
           <div className="flex-1 flex justify-center">
             <nav className="hidden md:flex items-center space-x-8">
-              {!isAdminRoute && (
-                <>
-                  <Link 
-                    to="/livestream" 
-                    className={`transition-colors ${
-                      location.pathname === '/livestream' 
-                        ? 'text-[#75E0A7]' 
-                        : 'text-[#CECFD2] hover:text-[#F7F7F7]'
-                    }`}
-                  >
-                    Live Streams
-                  </Link>
-                  <Link 
-                    to="/defitesting" 
-                    className={`transition-colors ${
-                      location.pathname === '/defitesting' 
-                        ? 'text-[#75E0A7]' 
-                        : 'text-[#CECFD2] hover:text-[#F7F7F7]'
-                    }`}
-                  >
-                    DeFi Testing
-                  </Link>
-                </>
-              )}
-              
               {user && isAdmin && (
                 <div className="flex items-center space-x-6">
                   <Link 

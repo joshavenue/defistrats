@@ -16,7 +16,7 @@ const vendorChunks: VendorChunk[] = [
   { name: "rich-text", prefixes: ["@tiptap/", "prosemirror-"] },
   { name: "charts", exact: ["recharts", "victory-vendor"], prefixes: ["d3-"] },
   { name: "animation", exact: ["gsap", "lenis"] },
-  { name: "web3-wallet", exact: ["wagmi", "viem", "ox", "abitype", "mipd", "zustand"], prefixes: ["@privy-io/", "@walletconnect/", "@reown/", "@metamask/", "@coinbase/", "@safe-global/", "@gemini-wallet/", "@base-org/"] },
+  { name: "web3-wallet", exact: ["viem", "ox", "abitype", "mipd", "zustand"], prefixes: ["@privy-io/", "@walletconnect/", "@reown/", "@metamask/", "@coinbase/", "@safe-global/", "@gemini-wallet/", "@base-org/"] },
   { name: "web3-moralis", exact: ["moralis"], prefixes: ["@moralisweb3/"] },
   { name: "web3-legacy-crypto", exact: ["web3-utils", "web3-eth-abi", "ethers", "ethereumjs-util", "ethereum-cryptography", "secp256k1", "elliptic", "bn.js"], prefixes: ["@ethersproject/"] },
   { name: "http-client", exact: ["axios", "follow-redirects", "form-data"] },

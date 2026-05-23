@@ -259,48 +259,6 @@ export type Database = {
         }
         Relationships: []
       }
-      livestream_videos: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          description: string | null
-          id: string
-          is_active: boolean | null
-          order_index: number | null
-          preview_image_url: string | null
-          title: string
-          updated_at: string | null
-          updated_by: string | null
-          x_broadcast_url: string
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          is_active?: boolean | null
-          order_index?: number | null
-          preview_image_url?: string | null
-          title: string
-          updated_at?: string | null
-          updated_by?: string | null
-          x_broadcast_url: string
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          is_active?: boolean | null
-          order_index?: number | null
-          preview_image_url?: string | null
-          title?: string
-          updated_at?: string | null
-          updated_by?: string | null
-          x_broadcast_url?: string
-        }
-        Relationships: []
-      }
       page_views: {
         Row: {
           created_at: string

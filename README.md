@@ -53,7 +53,6 @@ Important routes:
 - `/admin/add` - create or edit staking assets
 - `/admin/database` - manage restored staking assets
 - `/admin/user` - user/admin request management
-- `/admin/livestream` - livestream video management
 
 Admin authorization is backed by the `profiles` table. Superadmin privileges are controlled with `is_superadmin`; do not update these flags from the browser or ad hoc SQL without checking RLS and audit implications.
 
@@ -65,7 +64,6 @@ Core content lives in:
 - `apy_tvl_configs`
 - `scraper_configs`
 - `banners`
-- `livestream_videos`
 
 For URL cleanup, prefer a reviewed migration or SQL script over live manual edits. Current Agent 4 cleanup SQL is in `supabase/migrations/20260522091230_normalize_agent4_data_urls.sql`.
 

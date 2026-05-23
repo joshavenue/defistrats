@@ -4,8 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
-import BTCBridge from "./pages/BTCBridge";
-import { DeFiTesting } from "./pages/DeFiTesting";
 import AdminAdd from "./pages/AdminAdd";
 import AdminDatabase from "./pages/AdminDatabase";
 import AdminLogin from "./pages/AdminLogin";
@@ -13,8 +11,6 @@ import NotFound from "./pages/NotFound";
 import AdminUser from "./pages/AdminUser";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import StrategyDetail from "./pages/StrategyDetail";
-import Livestream from "./pages/Livestream";
-import AdminLivestream from "./pages/AdminLivestream";
 import CMS from "./pages/CMS";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -158,9 +154,6 @@ const App = () => {
             <AnalyticsWrapper>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/btc-bridge" element={<BTCBridge />} />
-                <Route path="/defitesting" element={<DeFiTesting />} />
-                <Route path="/livestream" element={<Livestream />} />
                 <Route path="/strategy/drip.trade/nft" element={<Navigate to="/strategy/driptrade/nft" replace />} />
                 <Route path="/strategy/:protocol/:assets" element={<StrategyDetail />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
@@ -183,11 +176,6 @@ const App = () => {
                 <Route path="/admin/analytics" element={
                   <AdminProtectedRoute>
                     <AdminAnalytics />
-                  </AdminProtectedRoute>
-                } />
-                <Route path="/admin/livestream" element={
-                  <AdminProtectedRoute>
-                    <AdminLivestream />
                   </AdminProtectedRoute>
                 } />
                 <Route path="/admin/cms" element={

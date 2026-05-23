@@ -158,6 +158,5 @@ For a content-only backup, export these tables from SQL or the dashboard:
 - `apy_tvl_configs`
 - `scraper_configs`
 - `banners`
-- `livestream_videos`
 
 Keep exports out of git unless they have been reviewed and stripped of user data, analytics data, private URLs, and credentials.
