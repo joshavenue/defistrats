@@ -10,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Trash2, Edit } from "lucide-react";
+import { FileSpreadsheet, Loader2, TableIcon, Trash2, Edit } from "lucide-react";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { AdminDataTable } from "@/components/AdminDataTable";
+import { SheetDataTable } from "@/components/SheetDataTable";
 import Header from "@/components/Header";
 
 type Banner = Tables<"banners">;
@@ -23,6 +24,7 @@ const CMS = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
+  const [strategyViewMode, setStrategyViewMode] = useState<"sheet" | "table">("sheet");
   const [bannerForm, setBannerForm] = useState({
     title: "",
     image_url: "",
@@ -239,8 +241,35 @@ const CMS = () => {
               </TabsList>
 
               <TabsContent value="database" className="mt-6">
-                <div className="bg-[#0C0E12] rounded-lg">
-                  <AdminDataTable onEdit={handleEdit} />
+                <div className="bg-[#0C0E12] rounded-lg space-y-4">
+                  <div className="flex justify-end">
+                    <div className="flex gap-1 bg-[#22262F] rounded-lg p-1">
+                      <Button
+                        onClick={() => setStrategyViewMode("sheet")}
+                        variant="ghost"
+                        size="sm"
+                        className={`${strategyViewMode === "sheet" ? "bg-[#373A41] text-[#F7F7F7]" : "text-[#94979C] hover:text-[#F7F7F7]"} px-3 py-1.5`}
+                      >
+                        <FileSpreadsheet size={16} className="mr-1.5" />
+                        Bulk Editor
+                      </Button>
+                      <Button
+                        onClick={() => setStrategyViewMode("table")}
+                        variant="ghost"
+                        size="sm"
+                        className={`${strategyViewMode === "table" ? "bg-[#373A41] text-[#F7F7F7]" : "text-[#94979C] hover:text-[#F7F7F7]"} px-3 py-1.5`}
+                      >
+                        <TableIcon size={16} className="mr-1.5" />
+                        Table
+                      </Button>
+                    </div>
+                  </div>
+
+                  {strategyViewMode === "sheet" ? (
+                    <SheetDataTable onEdit={handleEdit} />
+                  ) : (
+                    <AdminDataTable onEdit={handleEdit} />
+                  )}
                 </div>
               </TabsContent>
 

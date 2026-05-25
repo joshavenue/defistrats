@@ -60,6 +60,15 @@ interface EditedAsset extends StakingAsset {
   _edited?: boolean;
 }
 
+type BulkAction =
+  | 'publish'
+  | 'draft'
+  | 'feature'
+  | 'unfeature'
+  | 'risk-low'
+  | 'risk-medium'
+  | 'risk-high';
+
 interface SheetDataTableProps {
   onEdit: (id: string) => void;
   className?: string;
@@ -77,6 +86,7 @@ export const SheetDataTable: React.FC<SheetDataTableProps> = ({
 }) => {
   const [editedAssets, setEditedAssets] = useState<Record<string, EditedAsset>>({});
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState<BulkAction | ''>('');
   const [currentCell, setCurrentCell] = useState<{ row: string; field: string } | null>(null);
   const [filters, setFilters] = useState<SimpleFilterConfig>({
     protocol: [],
@@ -233,6 +243,70 @@ export const SheetDataTable: React.FC<SheetDataTableProps> = ({
     }
   });
 
+  const getBulkUpdate = (action: BulkAction): {
+    updates: Partial<Pick<StakingAsset, 'status' | 'featured' | 'risk_level'>>;
+    label: string;
+  } => {
+    switch (action) {
+      case 'publish':
+        return { updates: { status: 'published' }, label: 'published' };
+      case 'draft':
+        return { updates: { status: 'draft' }, label: 'moved to draft' };
+      case 'feature':
+        return { updates: { featured: true }, label: 'marked as featured' };
+      case 'unfeature':
+        return { updates: { featured: false }, label: 'unmarked as featured' };
+      case 'risk-low':
+        return { updates: { risk_level: 'low' }, label: 'set to low risk' };
+      case 'risk-medium':
+        return { updates: { risk_level: 'medium' }, label: 'set to medium risk' };
+      case 'risk-high':
+        return { updates: { risk_level: 'high' }, label: 'set to high risk' };
+    }
+  };
+
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async (action: BulkAction) => {
+      const idsToUpdate = Array.from(selectedRows);
+      if (idsToUpdate.length === 0) {
+        throw new Error('No rows selected');
+      }
+
+      const { updates, label } = getBulkUpdate(action);
+      const { error } = await supabase
+        .from('staking_assets')
+        .update(updates)
+        .in('id', idsToUpdate);
+      if (error) throw error;
+      return { idsToUpdate, updates, label };
+    },
+    onSuccess: ({ idsToUpdate, updates, label }) => {
+      queryClient.invalidateQueries({ queryKey: ['staking-assets'] });
+      setEditedAssets(prev => {
+        const next = { ...prev };
+        idsToUpdate.forEach(id => {
+          if (next[id]) {
+            next[id] = { ...next[id], ...updates, _edited: false };
+          }
+        });
+        return next;
+      });
+      toast({
+        title: "Success",
+        description: `${idsToUpdate.length} assets ${label}`
+      });
+      setSelectedRows(new Set());
+      setBulkAction('');
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to apply bulk edit",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!currentCell) return;
 
@@ -382,8 +456,8 @@ export const SheetDataTable: React.FC<SheetDataTableProps> = ({
   return (
     <div className={`border border-[#22262F] shadow-sm w-full overflow-hidden bg-[#0C0E12] rounded-xl ${className}`}>
       {/* Toolbar */}
-      <div className="border-b border-[#22262F] p-4 flex items-center justify-between bg-[#0F1117]">
-        <div className="flex items-center gap-4">
+      <div className="border-b border-[#22262F] p-4 flex flex-wrap items-center justify-between gap-3 bg-[#0F1117]">
+        <div className="flex flex-wrap items-center gap-3">
           <Button
             onClick={() => saveChangesMutation.mutate()}
             disabled={!hasChanges()}
@@ -402,18 +476,46 @@ export const SheetDataTable: React.FC<SheetDataTableProps> = ({
             Discard
           </Button>
           {selectedRows.size > 0 && (
-            <Button
-              onClick={() => {
-                if (window.confirm(`Delete ${selectedRows.size} selected items?`)) {
-                  deleteSelectedMutation.mutate();
-                }
-              }}
-              variant="outline"
-              className="border-red-500/50 text-red-400 hover:bg-red-500/10 bg-transparent flex items-center gap-2"
-            >
-              <Trash2 size={16} />
-              Delete Selected ({selectedRows.size})
-            </Button>
+            <>
+              <div className="flex items-center gap-2">
+                <Select value={bulkAction} onValueChange={(value) => setBulkAction(value as BulkAction)}>
+                  <SelectTrigger className="h-9 w-44 bg-[#22262F] border-[#373A41] text-[#CECFD2]">
+                    <SelectValue placeholder="Bulk edit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="publish">Publish</SelectItem>
+                    <SelectItem value="draft">Move to draft</SelectItem>
+                    <SelectItem value="feature">Mark featured</SelectItem>
+                    <SelectItem value="unfeature">Unmark featured</SelectItem>
+                    <SelectItem value="risk-low">Set risk low</SelectItem>
+                    <SelectItem value="risk-medium">Set risk medium</SelectItem>
+                    <SelectItem value="risk-high">Set risk high</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={() => bulkAction && bulkUpdateMutation.mutate(bulkAction)}
+                  disabled={!bulkAction || bulkUpdateMutation.isPending}
+                  variant="outline"
+                  className="border-[#75E0A7]/50 text-[#75E0A7] hover:bg-[#75E0A7]/10 bg-transparent flex items-center gap-2"
+                >
+                  <Edit3 size={16} />
+                  Apply ({selectedRows.size})
+                </Button>
+              </div>
+              <Button
+                onClick={() => {
+                  if (window.confirm(`Delete ${selectedRows.size} selected items?`)) {
+                    deleteSelectedMutation.mutate();
+                  }
+                }}
+                disabled={deleteSelectedMutation.isPending}
+                variant="outline"
+                className="border-red-500/50 text-red-400 hover:bg-red-500/10 bg-transparent flex items-center gap-2"
+              >
+                <Trash2 size={16} />
+                Delete Selected ({selectedRows.size})
+              </Button>
+            </>
           )}
           {onBatchFetch && (
             <Button
