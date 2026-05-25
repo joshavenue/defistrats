@@ -379,9 +379,10 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
           }))} filters={filters} onFiltersChange={setFilters} />
         </div>}
 
-      <div className="flex w-full font-medium flex-wrap max-md:max-w-full px-[16px]">
+      <div className="overflow-x-auto">
+      <div className="flex min-w-[1120px] w-full font-medium flex-nowrap max-md:max-w-full px-[16px]">
         {/* Protocol Icon Column */}
-        <div className="text-[#F7F7F7] w-[80px]">
+        <div className="text-[#F7F7F7] w-[80px] shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-xs text-[#94979C] font-semibold whitespace-nowrap pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:px-5 cursor-pointer hover:bg-[#0F1117] transition-colors" onClick={() => handleSort('protocol')}>
             <div className="flex items-center gap-1">
               <span className="text-[#94979C] text-xs leading-[18px)]">Protocol</span>
@@ -415,7 +416,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* Risk Column */}
-        <div className="text-xs text-[#CECFD2] whitespace-nowrap w-[87px]">
+        <div className="text-xs text-[#CECFD2] whitespace-nowrap w-[87px] shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-[#94979C] font-semibold pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:px-5">
             <span className="text-[#94979C] text-xs leading-[18px)]">Risk</span>
           </div>
@@ -425,7 +426,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* Tag Column */}
-        <div className="text-xs w-fit">
+        <div className="text-xs w-fit shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-[#94979C] font-semibold whitespace-nowrap pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:px-5">
             <span className="text-[#94979C] text-xs leading-[18px)]">Tag</span>
           </div>
@@ -447,7 +448,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* APY Column */}
-        <div className="text-[#17B26A] font-normal whitespace-nowrap w-[120px]">
+        <div className="text-[#17B26A] font-normal whitespace-nowrap w-[120px] shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-xs text-[#94979C] font-semibold pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:px-5 cursor-pointer hover:bg-[#0F1117] transition-colors" onClick={() => handleSort('apy')}>
             <div className="flex items-center gap-1">
               <span className="text-[#94979C] text-xs leading-[18px)]">APY</span>
@@ -485,7 +486,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* TVL Column */}
-        <div className="text-[#94979C] font-normal w-[220px]">
+        <div className="text-[#94979C] font-normal w-[220px] shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-xs text-[#94979C] font-semibold pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:pl-5 cursor-pointer hover:bg-[#0F1117] transition-colors" onClick={() => handleSort('tvl')}>
             <div className="flex items-center gap-1">
               <span className="text-[#94979C] text-xs leading-[18px)]">TVL</span>
@@ -530,7 +531,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* Status Column */}
-        <div className="font-semibold leading-none w-[100px]">
+        <div className="font-semibold leading-none w-[100px] shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-xs text-[#94979C] font-semibold pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:px-5">
             <span className="text-[#94979C] text-xs leading-[18px)]">Status</span>
           </div>
@@ -546,7 +547,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* Featured Column */}
-        <div className="font-semibold leading-none w-[100px]">
+        <div className="font-semibold leading-none w-[100px] shrink-0">
           <div className="items-center border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-xs text-[#94979C] font-semibold pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid max-md:px-5">
             <span className="text-[#94979C] text-xs leading-[18px)]">Featured</span>
           </div>
@@ -560,7 +561,7 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
 
         {/* Actions Column */}
-        <div className="font-semibold leading-none w-[120px]">
+        <div className="font-semibold leading-none w-[120px] shrink-0 sticky right-0 z-20 bg-[#0C0E12] shadow-[-8px_0_16px_-12px_rgba(0,0,0,0.85)]">
           <div className="border-b-[color:var(--Colors-Border-border-secondary,#22262F)] flex min-h-11 w-full gap-3 text-xs text-[#94979C] font-semibold pr-[var(--spacing-3xl,] pl-[var(--spacing-3xl,] bg-[#0C0E12] py-[12px)] border-b border-solid px-0">
             <span className="text-[#94979C] text-xs leading-[18px)]">Actions</span>
           </div>
@@ -575,9 +576,9 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
       </div>
       
       {/* Pagination Row */}
-      <div className="flex w-full border-t-[color:var(--Colors-Border-border-secondary,#22262F)] border-t border-solid min-h-[72px]">
+      <div className="flex min-w-[1120px] w-full border-t-[color:var(--Colors-Border-border-secondary,#22262F)] border-t border-solid min-h-[72px]">
         {/* Protocol Icon Pagination */}
-        <div className="w-[80px] flex items-center px-[16px]"></div>
+        <div className="w-[80px] shrink-0 flex items-center px-[16px]"></div>
         
         {/* Company Pagination */}
         <div className="min-w-44 flex-1 shrink basis-[0%] flex items-center px-[16px]">
@@ -592,29 +593,30 @@ export const AdminDataTable: React.FC<AdminDataTableProps> = ({
         </div>
         
         {/* Risk Pagination */}
-        <div className="w-[87px] flex items-center justify-center px-[16px]"></div>
+        <div className="w-[87px] shrink-0 flex items-center justify-center px-[16px]"></div>
         
         {/* Tag Pagination */}
-        <div className="w-fit flex items-center justify-center px-[16px]"></div>
+        <div className="w-fit shrink-0 flex items-center justify-center px-[16px]"></div>
         
         {/* APY Pagination */}
-        <div className="w-[120px] flex items-center justify-center px-[16px]"></div>
+        <div className="w-[120px] shrink-0 flex items-center justify-center px-[16px]"></div>
         
         {/* TLV Pagination */}
-        <div className="w-[220px] flex items-center justify-center px-[16px]"></div>
+        <div className="w-[220px] shrink-0 flex items-center justify-center px-[16px]"></div>
         
         {/* Status Pagination */}
-        <div className="w-[100px] flex items-center justify-center px-[16px]"></div>
+        <div className="w-[100px] shrink-0 flex items-center justify-center px-[16px]"></div>
         
         {/* Featured Pagination */}
-        <div className="w-[100px] flex items-center justify-center px-[16px]"></div>
+        <div className="w-[100px] shrink-0 flex items-center justify-center px-[16px]"></div>
         
         {/* Actions Pagination */}
-        <div className="w-[120px] flex items-center justify-center px-[16px]">
+        <div className="w-[120px] shrink-0 flex items-center justify-center px-[16px] sticky right-0 z-20 bg-[#0C0E12] shadow-[-8px_0_16px_-12px_rgba(0,0,0,0.85)]">
           <div className="text-[#CECFD2] text-sm font-medium leading-[20px)]">
             Page {currentPage}
           </div>
         </div>
+      </div>
       </div>
     </div>;
 };
